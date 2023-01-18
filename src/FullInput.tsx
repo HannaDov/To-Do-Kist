@@ -1,23 +1,26 @@
-import React, {ChangeEvent, KeyboardEvent, useState} from 'react';
+import  React, {ChangeEvent, KeyboardEvent, useState} from 'react';
 import {Button, TextField} from "@mui/material";
 
 type FullInputPropsType = {
     callback: (title: string) => void
 
 }
-export const FullInput = (props: FullInputPropsType) => {
+export const FullInput = React.memo((props: FullInputPropsType) => {
+    console.log('fullInput is called')
     const [newTaskTitle, setNewTaskTitle] = useState('')
-    const [error, setError] = useState<boolean>(false)
+    const [error, setError] = useState<string|null>(null)
     const addTaskHandler = () => {
         if (newTaskTitle.trim() !== "") {
             props.callback(newTaskTitle.trim())
             setNewTaskTitle('')
         } else {
-            setError(true)
+            setError('title is required')
         }
     }
     const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        setError(false)
+        if(error!==null)
+        {setError(null)}
+
         if (e.key === "Enter") {
             addTaskHandler()
         }
@@ -34,12 +37,12 @@ export const FullInput = (props: FullInputPropsType) => {
                        label={!error?"Enter your text":"Title is required"}
                        variant="standard"
                        size='small'
-                       error={error}/>
+                       error={!!error}/>
             <Button variant="contained" onClick={addTaskHandler}
                     style={{maxWidth: '38px', maxHeight: '38px', minWidth: '38px', minHeight: '38px'}}>+</Button>
             {/*{error && <div className='error-message'>Title is required</div>}*/}
 
         </div>
     )
-}
+});
 

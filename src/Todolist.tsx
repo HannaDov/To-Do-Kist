@@ -1,39 +1,46 @@
-import {Button, Checkbox, TextField} from '@mui/material';
-import React, {useState, KeyboardEvent, ChangeEvent} from 'react';
-import {FilterValueType} from "./App";
+import {Button, Checkbox} from '@mui/material';
+import React, {useCallback} from 'react';
+
 import {Delete} from '@mui/icons-material'
 import {IconButton} from '@mui/material'
 import {FullInput} from "./FullInput";
 import {EditTableSpan} from "./EditTableSpan";
+import {useDispatch, useSelector} from "react-redux";
+import {AppRootState} from "./state/store";
+import {addTaskAC, changeTaskStatusAC, editTaskAC, removeTaskAC} from "./state/tasks-reducer";
+import {FilterValueType} from "./AppWithRedux";
 
 
 type TodolistPropsType = {
     title: string
-    tasks: Array<TaskPropsType>
-    removeTasks: (todolistId: string, taskId: string) => void
+
     changeFilter: (todolistId: string, value: FilterValueType) => void
-    addTask: (todolistId: string, newTitle: string) => void
-    changeTaskStatus: (todolistId: string, taskId: string, isDone: boolean) => void
     filter: FilterValueType
     id: string
     removeTodolist: (todolistId: string) => void
     editTodolist: (todolistId: string, newTitle: string) => void
-    editTask: (todolistId: string, taskId: string, newTitle: string) => void
+
 }
 export type TaskPropsType = {
     id: string
     title: string
     isDone: boolean
 }
-export const Todolist: React.FC<TodolistPropsType> = (props) => {
-    /* const [newTaskTitle, setNewTaskTitle] = useState('')
+export const Todolist =React.memo(function (props:TodolistPropsType){
+    console.log('Todolist is called')
+    const tasks = useSelector<AppRootState, Array<TaskPropsType>>(state => state.tasks[props.id])
+    const dispatch = useDispatch()
+
+
+
+     /*const [newTaskTitle, setNewTaskTitle] = useState('')
      const [error, setError] = useState<string | null>(null)*/
-    const removeTasksHandler = (todolistId: string, elId: string) => {
-        props.removeTasks(props.id, elId)
-    }
-    const changeFilterHandler = (todolistId: string, value: FilterValueType) => {
-        props.changeFilter(todolistId, value)
-    }
+    const removeTasksHandler = useCallback((todolistId: string, elId: string) => {
+        dispatch(removeTaskAC(props.id, elId))
+    },[dispatch])
+   /* const changeFilterHandler = useCallback((todolistId: string, value: FilterValueType) => {
+        props.changeFilter(props.id, value)
+    },[props.changeFilter,props.id])*/
 
     /* const addTaskHandler = () => {
          if (newTaskTitle.trim() !== "") {
@@ -52,21 +59,36 @@ export const Todolist: React.FC<TodolistPropsType> = (props) => {
      const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
          setNewTaskTitle(event.currentTarget.value)
      }*/
-    const changeTaskStatusHandler = (todolistId: string, elId: string, checkedValue: boolean) => {
-        props.changeTaskStatus(props.id, elId, checkedValue)
-    }
+    const changeTaskStatusHandler = useCallback((todolistId: string, elId: string, checkedValue: boolean) => {
+        dispatch(changeTaskStatusAC(props.id, elId, checkedValue))
+    },[dispatch])
     const removeTodolistHandler = () => {
         props.removeTodolist(props.id)
     }
-    const addTaskHandler = (newTitle: string) => {
-        props.addTask(props.id, newTitle)
-    }
-    const editTodolistHandler = (newTitle: string) => {
+    const addTaskHandler =useCallback( (newTitle: string) => {
+        dispatch(addTaskAC(props.id, newTitle))
+    },[dispatch])
+    const editTodolistHandler = useCallback((newTitle: string) => {
         props.editTodolist(props.id, newTitle)
+    },[props.editTodolist,props.id])
+    const editTaskHandler = useCallback((elId: string, newTitle: string) => {
+        dispatch(editTaskAC(props.id, elId, newTitle))
+    },[dispatch])
+    let tasksForTodolist = tasks
+    if (props.filter === 'Completed') {
+        tasksForTodolist = tasks.filter(el => el.isDone == true)
     }
-    const editTaskHandler = (elId: string, newTitle: string) => {
-        props.editTask(props.id, elId, newTitle)
-    }
+    if (props.filter === 'Active') {
+        tasksForTodolist = tasks.filter(el => el.isDone == false)}
+    const onClickAllHandler=useCallback(()=>{
+        props.changeFilter(props.id, 'All')
+    },[props.changeFilter,props.id])
+    const onClickActiveHandler=useCallback(()=>{
+        props.changeFilter(props.id, 'Active')
+    },[props.changeFilter,props.id])
+    const onClickCompletedHandler=useCallback(()=>{
+        props.changeFilter(props.id, 'Completed')
+    },[props.changeFilter,props.id])
     return (
         <div>
             <div>
@@ -100,12 +122,12 @@ export const Todolist: React.FC<TodolistPropsType> = (props) => {
                     {error && <div className='error-message'>{error}</div>}
                 </div>*/}
                 <ul>
-                    {props.tasks.map(el => {
+                    {tasks.map(el => {
 
                         return (
                             <li key={el.id} className={el.isDone ? 'is-done' : ''}>
-                                <Checkbox  defaultChecked checked={el.isDone}
-                                           size='small'
+                                <Checkbox defaultChecked checked={el.isDone}
+                                          size='small'
                                           onChange={(event) => changeTaskStatusHandler(props.id, el.id, event.currentTarget.checked)}/>
                                 {/*<input type='checkbox' checked={el.isDone}
 
@@ -124,23 +146,23 @@ export const Todolist: React.FC<TodolistPropsType> = (props) => {
                 </ul>
                 <div>
                     <Button variant={props.filter === "All" ? "outlined" : "contained"}
-                            onClick={() => changeFilterHandler(props.id, 'All')}
-                            size='small' color='inherit'>All
+                            onClick={onClickAllHandler}
+                            size={'small'} color={'inherit'}>All
                     </Button>
                     <Button variant={props.filter === "Active" ? "outlined" : "contained"}
-                            onClick={() => changeFilterHandler(props.id, 'Active')}
-                        /* className={props.filter === "Active" ? "active-filter" : ''}*/ size='small' color='primary'>Active
+                            onClick={onClickActiveHandler}
+                        /* className={props.filter === "Active" ? "active-filter" : ''}*/ size={'small'} color={'primary'}>Active
                     </Button>
                     <Button variant={props.filter === "Completed" ? "outlined" : "contained"}
-                            onClick={() => changeFilterHandler(props.id, 'Completed')}
-                            color='secondary' size='small'>Completed
+                            onClick={onClickCompletedHandler}
+                            color={'secondary'} size={'small'}>Completed
                     </Button>
                 </div>
             </div>
         </div>
 
     )
-};
+});
 
 
 

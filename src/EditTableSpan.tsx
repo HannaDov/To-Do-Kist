@@ -4,7 +4,8 @@ type EditTablePropsType = {
     title: string
     callback:(title:string)=>void
 }
-export const EditTableSpan = (props: EditTablePropsType) => {
+export const EditTableSpan =React.memo( (props: EditTablePropsType) => {
+    console.log('editTableSpan is called')
     const [edit, setEdit] = useState(false)
     const [newTitle, setNewTitle]=useState(props.title)
     const OnDoubleClickHandler=()=>{
@@ -21,5 +22,5 @@ export const EditTableSpan = (props: EditTablePropsType) => {
             <span onDoubleClick={OnDoubleClickHandler}>{props.title}</span>
 
     );
-};
+});
 
