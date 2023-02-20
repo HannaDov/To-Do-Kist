@@ -1,5 +1,5 @@
 import {Button, Checkbox} from '@mui/material';
-import React, {useCallback} from 'react';
+import React, {memo, useCallback} from 'react';
 
 import {Delete} from '@mui/icons-material'
 import {IconButton} from '@mui/material'
@@ -7,13 +7,13 @@ import {FullInput} from "./FullInput";
 import {EditTableSpan} from "./EditTableSpan";
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "./state/store";
-import {addTaskAC, changeTaskStatusAC, editTaskAC, removeTaskAC} from "./state/tasks-reducer";
+import {addTaskAC} from "./state/tasks-reducer";
 import {FilterValueType} from "./AppWithRedux";
+import {Task} from "./Task";
 
 
 type TodolistPropsType = {
     title: string
-
     changeFilter: (todolistId: string, value: FilterValueType) => void
     filter: FilterValueType
     id: string
@@ -26,7 +26,7 @@ export type TaskPropsType = {
     title: string
     isDone: boolean
 }
-export const Todolist =React.memo(function (props:TodolistPropsType){
+export const Todolist =memo(function (props:TodolistPropsType){
     console.log('Todolist is called')
     const tasks = useSelector<AppRootState, Array<TaskPropsType>>(state => state.tasks[props.id])
     const dispatch = useDispatch()
@@ -35,9 +35,9 @@ export const Todolist =React.memo(function (props:TodolistPropsType){
 
      /*const [newTaskTitle, setNewTaskTitle] = useState('')
      const [error, setError] = useState<string | null>(null)*/
-    const removeTasksHandler = useCallback((todolistId: string, elId: string) => {
+    /*const removeTasksHandler = useCallback((todolistId: string, elId: string) => {
         dispatch(removeTaskAC(props.id, elId))
-    },[dispatch])
+    },[dispatch])*/
    /* const changeFilterHandler = useCallback((todolistId: string, value: FilterValueType) => {
         props.changeFilter(props.id, value)
     },[props.changeFilter,props.id])*/
@@ -59,9 +59,9 @@ export const Todolist =React.memo(function (props:TodolistPropsType){
      const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
          setNewTaskTitle(event.currentTarget.value)
      }*/
-    const changeTaskStatusHandler = useCallback((todolistId: string, elId: string, checkedValue: boolean) => {
+   /* const changeTaskStatusHandler = useCallback((todolistId: string, elId: string, checkedValue: boolean) => {
         dispatch(changeTaskStatusAC(props.id, elId, checkedValue))
-    },[dispatch])
+    },[dispatch])*/
     const removeTodolistHandler = () => {
         props.removeTodolist(props.id)
     }
@@ -71,9 +71,9 @@ export const Todolist =React.memo(function (props:TodolistPropsType){
     const editTodolistHandler = useCallback((newTitle: string) => {
         props.editTodolist(props.id, newTitle)
     },[props.editTodolist,props.id])
-    const editTaskHandler = useCallback((elId: string, newTitle: string) => {
+    /*const editTaskHandler = useCallback((elId: string, newTitle: string) => {
         dispatch(editTaskAC(props.id, elId, newTitle))
-    },[dispatch])
+    },[dispatch])*/
     let tasksForTodolist = tasks
     if (props.filter === 'Completed') {
         tasksForTodolist = tasks.filter(el => el.isDone == true)
@@ -122,24 +122,28 @@ export const Todolist =React.memo(function (props:TodolistPropsType){
                     {error && <div className='error-message'>{error}</div>}
                 </div>*/}
                 <ul>
-                    {tasks.map(el => {
+                    {tasksForTodolist.map(el => {
 
                         return (
-                            <li key={el.id} className={el.isDone ? 'is-done' : ''}>
+                         /*   <li key={el.id} className={el.isDone ? 'is-done' : ''}>
                                 <Checkbox defaultChecked checked={el.isDone}
                                           size='small'
                                           onChange={(event) => changeTaskStatusHandler(props.id, el.id, event.currentTarget.checked)}/>
-                                {/*<input type='checkbox' checked={el.isDone}
+                                {/!*<input type='checkbox' checked={el.isDone}
 
-                                       onChange={(event) => changeTaskStatusHandler(props.id, el.id, event.currentTarget.checked)}/>*/}
+                                       onChange={(event) => changeTaskStatusHandler(props.id, el.id, event.currentTarget.checked)}/>*!/}
 
                                 <EditTableSpan title={el.title}
                                                callback={(newTitle) => editTaskHandler(el.id, newTitle)}/>
-                                {/* <button onClick={() => removeTasksHandler(props.id, el.id)}>✖</button>*/}
+                                {/!* <button onClick={() => removeTasksHandler(props.id, el.id)}>✖</button>*!/}
                                 <IconButton aria-label="delete">
                                     <Delete onClick={() => removeTasksHandler(props.id, el.id)}/>
                                 </IconButton>
-                            </li>
+                            </li>*/
+                            <Task key={el.id}
+                            todolistId={props.id}
+                            task={el}/>
+
                         )
                     })}
 
