@@ -4,7 +4,7 @@ import {TaskPropsType, Todolist} from "./Todolist";
 
 import {FullInput} from "./FullInput";
 import {ButtonAppBar} from './ButtonAppBar';
-import {Container, Grid, Paper} from "@mui/material";
+
 import {
     addTodolistAC,
     changeFilterAC,
@@ -15,6 +15,7 @@ import {
 
 import {useDispatch, useSelector} from "react-redux";
 import {AppRootState} from "./state/store";
+import {Container, Grid, Paper} from "@material-ui/core";
 
 
 export type FilterValueType = 'All' | 'Active' | 'Completed'
@@ -28,8 +29,9 @@ export type TaskObjectType = {
 }
 
 function AppWithRedux() {
+    console.log('app')
+    const tasks = useSelector<AppRootState, TaskObjectType>(state => state.tasks)
 
-    console.log('App is called')
     const dispatch = useDispatch()
     const todolists = useSelector<AppRootState, Array<TodolistPropsType>>(state => state.todolists)
 
@@ -65,7 +67,7 @@ function AppWithRedux() {
                             <Paper style={{padding: '10px'}} elevation={12}> <Todolist title={el.title}
                                                                                        changeFilter={changeFilter}
                                                                                        filter={el.filter}
-
+                                                                                       tasks={tasks[el.id]}
                                                                                        id={el.id}
                                                                                        removeTodolist={removeTodolist}
                                                                                        editTodolist={editTodolist}

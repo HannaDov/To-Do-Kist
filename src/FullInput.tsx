@@ -1,4 +1,4 @@
-import  React, {ChangeEvent, KeyboardEvent, useState} from 'react';
+import React, {ChangeEvent, KeyboardEvent,  useState} from 'react';
 import {Button, TextField} from "@mui/material";
 
 type FullInputPropsType = {
@@ -18,8 +18,8 @@ export const FullInput = React.memo((props: FullInputPropsType) => {
         }
     }
     const onKeyPressHandler = (e: KeyboardEvent<HTMLInputElement>) => {
-        if(error!==null)
-        {setError(null)}
+        if(error!==null){
+            setError(null)}
 
         if (e.key === "Enter") {
             addTaskHandler()

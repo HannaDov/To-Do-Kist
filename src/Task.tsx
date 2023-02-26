@@ -1,49 +1,43 @@
-import React, {ChangeEvent, memo, useCallback} from 'react';
-import {Checkbox, IconButton} from "@material-ui/core";
+import React, {useCallback} from 'react';
 import {EditTableSpan} from "./EditTableSpan";
-import {Delete} from "@mui/icons-material";
+import {Delete} from "@material-ui/icons";
 import {TaskPropsType} from "./Todolist";
-import {changeTaskStatusAC, editTaskAC, removeTaskAC} from "./state/tasks-reducer";
 import {useDispatch} from "react-redux";
+import {changeTaskStatusAC, editTaskAC, removeTaskAC} from "./state/tasks-reducer";
+import {Checkbox, IconButton} from "@mui/material";
 
 
-export type TaskType = {
-    task: TaskPropsType
+ type TaskType={
+    task:TaskPropsType
     todolistId:string
 }
-export const Task =memo( ({  task,todolistId
-    }:TaskType) => {
-    console.log('task is render')
+export const Task=React.memo((props:TaskType)=>{
     const dispatch = useDispatch()
-let {id,isDone,title}=task
-    const editTaskHandler = useCallback((newTitle:string) => {
-        dispatch(editTaskAC(todolistId, id, newTitle))
-    },[dispatch])
-    const removeTasksHandler = useCallback(() => {
-        dispatch(removeTaskAC(todolistId,id))
-    },[dispatch])
-    const changeTaskStatusHandler = useCallback((event:ChangeEvent<HTMLInputElement>) => {
-        let newIsDone=event.currentTarget.checked
-        dispatch(changeTaskStatusAC(id,todolistId,newIsDone))
-    },[dispatch])
+    const changeTaskStatusHandler = useCallback((todolistId: string, elId: string, checkedValue: boolean) => {
+        dispatch(changeTaskStatusAC(props.todolistId, elId, checkedValue))
+    },[dispatch,props.todolistId])
+    const editTaskHandler = useCallback((elId: string, newTitle: string) => {
+        dispatch(editTaskAC(props.todolistId, elId, newTitle))
+    },[dispatch,props.todolistId])
+    const removeTasksHandler = useCallback((todolistId: string, elId: string) => {
+        dispatch(removeTaskAC(props.todolistId, elId))
+    },[dispatch,props.todolistId])
     return (
-        <li className={isDone ? 'is-done' : ''}>
-            <Checkbox defaultChecked checked={isDone}
+        <li key={props.task.id} className={props.task.isDone ? 'is-done' : ''}>
+            <Checkbox defaultChecked checked={props.task.isDone}
                       size='small'
-                      onChange={changeTaskStatusHandler}/>
+                      onChange={(event) => changeTaskStatusHandler(props.todolistId, props.task.id, event.currentTarget.checked)}/>
+            {/*<input type='checkbox' checked={el.isDone}
 
-            <EditTableSpan title={title}
-                           callback={editTaskHandler}/>
+                                          onChange={(event) => changeTaskStatusHandler(props.id, el.id, event.currentTarget.checked)}/>*/}
 
+            <EditTableSpan title={props.task.title}
+                           callback={(newTitle) => editTaskHandler(props.task.id, newTitle)}/>
+            {/* <button onClick={() => removeTasksHandler(props.id, el.id)}>✖</button>*/}
             <IconButton aria-label="delete">
-                <Delete onClick={removeTasksHandler}/>
+                <Delete onClick={() => removeTasksHandler(props.todolistId, props.task.id)}/>
             </IconButton>
         </li>
     )
 })
-
-
-
-
-
 

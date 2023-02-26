@@ -97,7 +97,7 @@ function App() {
                         }
                         return <Grid item>
                             <Paper style={{padding:'10px'}} elevation={12}> <Todolist title={el.title}
-                                              //tasks={tasksForTodolist}
+                                              tasks={tasksForTodolist}
                                               //removeTasks={removeTasks}
                                               changeFilter={changeFilter}
                                               //addTask={addTask}
