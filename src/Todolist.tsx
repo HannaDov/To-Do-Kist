@@ -1,21 +1,22 @@
-import {Button, Checkbox} from '@mui/material';
+import {Button} from '@mui/material';
 import React, { useCallback} from 'react';
 
 import {Delete} from '@mui/icons-material'
 import {IconButton} from '@mui/material'
 import {FullInput} from "./FullInput";
 import {EditTableSpan} from "./EditTableSpan";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 
-import {addTaskAC, changeTaskStatusAC, editTaskAC, removeTaskAC} from "./state/tasks-reducer";
+import {addTaskAC} from "./state/tasks-reducer";
 import {FilterValueType} from "./AppWithRedux";
 import {Task} from "./Task";
+import {AppRootState} from "./state/store";
 
 
 
 
 type TodolistPropsType = {
-    tasks: TaskPropsType[]
+    /*tasks: TaskPropsType[]*/
     title: string
     changeFilter: (todolistId: string, value: FilterValueType) => void
     filter: FilterValueType
@@ -31,7 +32,7 @@ export type TaskPropsType = {
 }
 export const Todolist = React.memo(function (props: TodolistPropsType) {
     console.log('Todolist is called')
-    //const tasks = useSelector<AppRootState, Array<TaskPropsType>>(state => state.tasks[props.id])
+    const tasks = useSelector<AppRootState, Array<TaskPropsType>>(state => state.tasks[props.id])
     const dispatch = useDispatch()
 
 
@@ -76,13 +77,13 @@ export const Todolist = React.memo(function (props: TodolistPropsType) {
    /* const editTaskHandler = useCallback((elId: string, newTitle: string) => {
         dispatch(editTaskAC(props.id, elId, newTitle))
     },[dispatch])*/
-    let tasks = props.tasks
+    let tasksForToDo = tasks
 
     if (props.filter === 'Completed') {
-        tasks = props.tasks.filter(el =>el.isDone  === true)
+        tasksForToDo = tasks.filter(el =>el.isDone  === true)
     }
     if (props.filter === 'Active') {
-        tasks = props.tasks.filter(el => el.isDone === false)
+        tasksForToDo = tasks.filter(el => el.isDone === false)
     }
     const onClickAllHandler = useCallback(() => {
         props.changeFilter(props.id, 'All')
@@ -126,7 +127,7 @@ export const Todolist = React.memo(function (props: TodolistPropsType) {
                     {error && <div className='error-message'>{error}</div>}
                 </div>*/}
                 <ul>
-                    {tasks.map(el => {
+                    {tasksForToDo.map(el => {
 
                         return (
                               /*<li key={el.id} className={el.isDone ? 'is-done' : ''}>

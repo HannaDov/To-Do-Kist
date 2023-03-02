@@ -30,7 +30,7 @@ export type TaskObjectType = {
 
 function AppWithRedux() {
     console.log('app')
-    const tasks = useSelector<AppRootState, TaskObjectType>(state => state.tasks)
+    //const tasks = useSelector<AppRootState, TaskObjectType>(state => state.tasks)
 
     const dispatch = useDispatch()
     const todolists = useSelector<AppRootState, Array<TodolistPropsType>>(state => state.todolists)
@@ -67,7 +67,7 @@ function AppWithRedux() {
                             <Paper style={{padding: '10px'}} elevation={12}> <Todolist title={el.title}
                                                                                        changeFilter={changeFilter}
                                                                                        filter={el.filter}
-                                                                                       tasks={tasks[el.id]}
+                                                                                      /* tasks={tasks[el.id]}*/
                                                                                        id={el.id}
                                                                                        removeTodolist={removeTodolist}
                                                                                        editTodolist={editTodolist}
