@@ -12,6 +12,16 @@ export type AppRootState = ReturnType<typeof rootReducers>
 export const store = legacy_createStore(rootReducers)
 
 // @ts-ignore
-window.store = store
+window.store = store;
+/*{
+    state:{
+
+            tasks: {}
+        todolists:[]
+    }
+    getState()
+    dispatch()
+    subscribe()
+}*/
 
 //30.24 урок от 27/09 глянуть код
